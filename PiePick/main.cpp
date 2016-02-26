@@ -28,13 +28,30 @@ int main() {
 	loadimage(&mariox, _T("img\\mariox.bmp"));
 	loadimage(&mario, _T("img\\mario.bmp"));
 
-	transimg(400, 465, &mario, &mariox);
+	int marioPosX = 400;
+	int marioPosY = 465;
+	transimg(marioPosX, marioPosY, &mario, &mariox);
+
 
 	char key;
 	bool flgEsc=false;
 	while (!flgEsc) {
 		key = _getch();
-		if 
+		if (key == 'q') flgEsc = true;
+		else if (key == 'a') {
+			// move left
+			if (marioPosX > 5) marioPosX -= 5;
+			//repaint bg
+			putimage(0, 0, &background);
+			transimg(marioPosX, marioPosY, &mario, &mariox);
+		}
+		else if (key == 'd') {
+			// move left
+			if (marioPosX <795) marioPosX += 5;
+			//repaint bg
+			putimage(0, 0, &background);
+			transimg(marioPosX, marioPosY, &mario, &mariox);
+		}
 	}
 
 
