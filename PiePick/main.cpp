@@ -28,10 +28,23 @@ int main() {
 	loadimage(&mariox, _T("img\\mariox.bmp"));
 	loadimage(&mario, _T("img\\mario.bmp"));
 
-	int marioPosX = 400;
+	int marioPosX = 0;
 	int marioPosY = 465;
 	transimg(marioPosX, marioPosY, &mario, &mariox);
+	// Demo anim
 
+	for (; marioPosX < 795; marioPosX += 5) {
+		putimage(0, 0, &background);
+		transimg(marioPosX, marioPosY, &mario, &mariox);
+		Sleep(15);
+	}
+	for (; marioPosX > 400; marioPosX -= 5) {
+		putimage(0, 0, &background);
+		transimg(marioPosX, marioPosY, &mario, &mariox);
+		Sleep(10);
+	}
+
+	// End of demo anim
 
 	char key;
 	bool flgEsc=false;
