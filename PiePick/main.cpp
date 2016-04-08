@@ -1,7 +1,7 @@
 #include <iostream>
 #include <conio.h>
 #include <graphics.h>
-#include <string.h>
+#include <time.h>
 
 
 using namespace std;
@@ -36,7 +36,7 @@ public:
 		putimage(0, 0, &background);
 	}
 	void setUsername(LPCTSTR name) {
-		wcscpy_s(username,name);
+		wcscpy_s(username, name);
 	}
 	void showUsername() {
 		setbkmode(TRANSPARENT);
@@ -49,7 +49,7 @@ public:
 		setbkmode(TRANSPARENT);
 		RECT rHS = { 400,10,800,40 };
 		wchar_t sHS[30];
-		swprintf_s(sHS,L"High score: %d",highScore);
+		swprintf_s(sHS, L"High score: %d", highScore);
 		drawtext(sHS, &rHS, DT_LEFT | DT_TOP);
 	}
 	void backupScore() {
@@ -164,8 +164,10 @@ public:
 		}
 	}
 	void refresh() {
+		BeginBatchDraw();
 		putimage(bkX, bkY, &backupBg);
 		show();
+		EndBatchDraw();
 	}
 };
 
@@ -184,7 +186,7 @@ int main() {
 	int marioPosY = 465;
 	transimg(marioPosX, marioPosY, &mario, &mariox);
 	// Demo anim
-	
+
 	for (; marioPosX < 795; marioPosX += 5) {
 		putimage(0, 0, &background);
 		transimg(marioPosX, marioPosY, &mario, &mariox);
@@ -198,10 +200,10 @@ int main() {
 
 	// End of demo anim
 
-	
+
 	//Get username
-	wchar_t usrName[20]=L"";
-	while (!InputBox(usrName, 20, L"Please input your name:", L"Input name")||!wcscmp(usrName,L""));
+	wchar_t usrName[20] = L"";
+	while (!InputBox(usrName, 20, L"Please input your name:", L"Input name") || !wcscmp(usrName, L""));
 	mainForm mForm;
 	mForm.loadBackground(L"img\\background.jpg");
 	mForm.setUsername(usrName);
@@ -253,6 +255,9 @@ int main() {
 	//main loop
 	bool flgEsc = false;
 	bool flgPlay = false;
+	bool flgKeyL = false;
+	bool flgKeyR = false;
+	clock_t timeKey=clock();
 	MOUSEMSG mouseMsg = GetMouseMsg();
 	while (!flgEsc) {
 		// check mouse
@@ -267,15 +272,18 @@ int main() {
 					flgPlay = false;
 			}
 		}
-
-		//check keyboard
-		if (keybd_event) {
-			if ((GetAsyncKeyState(VK_LEFT) & 1) == 1)
-				//move left
-				mario.moveL(10);
-			else if ((GetAsyncKeyState(VK_RIGHT) & 1) == 1)
-				//move right
-				mario.moveR(10);
+		if (flgPlay) { //if in game
+			//check keyboard
+			if (_kbhit()) {
+				//slow down the response
+				if (((clock() - timeKey)) > 1) {
+					timeKey = clock();
+					if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+						mario.moveL(2);
+					else if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
+						mario.moveR(2);
+				}
+			}
 		}
 
 	}
