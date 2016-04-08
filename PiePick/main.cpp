@@ -19,16 +19,80 @@ void transimg(int dstX, int dstY, IMAGE *sImg, IMAGE *xImg) {
 	putimage(dstX, dstY, hImg, SRCPAINT);
 	delete hImg;
 }
+class textBox {
+private:
+	int value;
+	wchar_t noti[30];
+	IMAGE bgImgBak;
+	int x1, x2, y1, y2;
+public:
+	void setNoti(LPCTSTR txt) {
+		wcscpy_s(noti, txt);
+	}
+	void setValue(int val) {
+		value = val;
+	}
+	/*LPCTSTR getText() {
+		return text;
+	}*/
+	void setPos(int x1, int y1, int x2, int y2) {
+		this->x1 = x1;
+		this->x2 = x2;
+		this->y1 = y1;
+		this->y2 = y2;
+	}
+	void bgBak() {
+		//back up the background
+		getimage(&bgImgBak, x1, y1, x2-x1, y2-y1);
+	}
+	void show() {
+		bgBak();
+		setbkmode(TRANSPARENT);
+		RECT r = {x1,y1,x2,y2 };
+		wchar_t sTxt[30];
+		swprintf_s(sTxt, L"%s: %d", noti,value);
+		drawtext(sTxt, &r, DT_LEFT | DT_TOP);
+	}
+	void refresh() {
+		putimage(x1, y1, &bgImgBak);
+		show();
+	}
+};
 
 class mainForm {
 private:
 	wchar_t username[20];
 	IMAGE background;
-	IMAGE scoreBackground; //score display's backup
 	int highScore = 0;
 	int score = 0;
 	int time = 200;
+	int life = 3;
 public:
+	textBox highScoreBox;
+	textBox scoreBox;
+	textBox timeBox;
+	textBox lifeBox;
+	void setHighScore(int hs) {
+		highScore = hs;
+		highScoreBox.setValue(hs);
+	}
+	void setScore(int s) {
+		score = s;
+		scoreBox.setValue(s);
+	}
+	void setLife(int l) {
+		life = l;
+		lifeBox.setValue(l);
+	}
+	void setTime(int time) {
+		this->time = time;
+		timeBox.setValue(time);
+	}
+	int getTime() {
+		return time;
+	}
+
+	//text boxes to be rewritten as a class
 	void loadBackground(LPCTSTR bgPath) {
 		loadimage(&background, bgPath);
 	}
@@ -45,38 +109,28 @@ public:
 		swprintf_s(sName, L"Player: %s", username);
 		drawtext(sName, &rName, DT_LEFT | DT_TOP);
 	}
-	void showHighScore() {
-		setbkmode(TRANSPARENT);
-		RECT rHS = { 400,10,800,40 };
-		wchar_t sHS[30];
-		swprintf_s(sHS, L"High score: %d", highScore);
-		drawtext(sHS, &rHS, DT_LEFT | DT_TOP);
-	}
-	void backupScore() {
-		//back up the background
-		getimage(&scoreBackground, 600, 10, 800 - 600, 40 - 10);
-	}
-	void showScore() {
-		setbkmode(TRANSPARENT);
-		RECT rScore = { 600,10,800,40 };
-		wchar_t sScore[30];
-		swprintf_s(sScore, L"Score: %d", score);
-		drawtext(sScore, &rScore, DT_LEFT | DT_TOP);
-	}
-	void refreshScore() {
-		//repaint background
-		putimage(600, 10, &scoreBackground);
-		showScore();
-	}
+
 	void init() {
 		initgraph(800, 600);
 		//paint bg
 		refreshBackground();
 		showUsername();
-		showHighScore();
-		backupScore();
-		showScore();
-
+		highScoreBox.setNoti(L"High Score");
+		highScoreBox.setValue(highScore);
+		highScoreBox.setPos(500, 10, 650, 40);
+		highScoreBox.show();
+		scoreBox.setNoti(L"Score");
+		scoreBox.setValue(score);
+		scoreBox.setPos(650, 10, 800, 40);
+		scoreBox.show();
+		timeBox.setNoti(L"Time");
+		timeBox.setValue(time);
+		timeBox.setPos(350, 10, 500, 40);
+		timeBox.show();
+		lifeBox.setNoti(L"Life");
+		lifeBox.setValue(life);
+		lifeBox.setPos(200, 10, 350, 40);
+		lifeBox.show();
 	}
 };
 
@@ -169,6 +223,9 @@ public:
 		show();
 		EndBatchDraw();
 	}
+	int getX() {
+		return x;
+	}
 };
 
 int main() {
@@ -257,7 +314,8 @@ int main() {
 	bool flgPlay = false;
 	bool flgKeyL = false;
 	bool flgKeyR = false;
-	clock_t timeKey=clock();
+	clock_t timeKey = clock();
+	clock_t timeGame = 0;
 	MOUSEMSG mouseMsg = GetMouseMsg();
 	while (!flgEsc) {
 		// check mouse
@@ -283,6 +341,13 @@ int main() {
 					else if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
 						mario.moveR(2);
 				}
+			}
+			//refresh time
+			if (timeGame==0) timeGame = clock(); //first second
+			if (clock() - timeGame >= 1000) {
+				timeGame = clock();
+				mForm.setTime(mForm.getTime() - 1);
+				mForm.timeBox.refresh();
 			}
 		}
 
