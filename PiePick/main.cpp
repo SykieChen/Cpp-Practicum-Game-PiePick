@@ -228,6 +228,78 @@ public:
 	}
 };
 
+class ball {
+private:
+	bool flgIsPie = true;
+	bool flgIsVisible = false;
+	IMAGE pie;
+	IMAGE pieX;
+	IMAGE bomb;
+	IMAGE bombX;
+	IMAGE unknown;
+	IMAGE unknownX;
+	IMAGE backupBg; //bg's backup
+	int x, y, width, height;
+	int bkX, bkY;
+public:
+	ball() {
+		loadimage(&pie, L"img\\pie.bmp");
+		loadimage(&pieX, L"img\\piex.bmp");
+		loadimage(&bomb, L"img\\bomb.bmp");
+		loadimage(&bombX, L"img\\bombx.bmp");
+		loadimage(&unknown, L"img\\unknown.bmp");
+		loadimage(&unknownX, L"img\\unknownx.bmp");
+		height = unknown.getheight();
+		width = unknown.getwidth();
+		y = 40;
+	}
+	void setX(int x) {
+		this->x = x;
+	}
+	void setAsPie(bool ifPie) {
+		flgIsPie = ifPie;
+	}
+	void show() {
+		getimage(&backupBg, x, y, width, height);
+		if (flgIsVisible) {
+			if (flgIsPie)
+				transimg(x, y, &pie, &pieX);
+			else
+				transimg(x, y, &bomb, &bombX);
+		}
+		else {
+			transimg(x, y, &unknown, &unknownX);
+		}
+		bkX = x;
+		bkY = y;
+	}
+	void refresh() {
+		BeginBatchDraw();
+		putimage(bkX, bkY, &backupBg);
+		show();
+		EndBatchDraw();
+	}
+	void uncover() {
+		flgIsVisible = true;
+	}
+	void cover() {
+		flgIsVisible = false;
+	}
+	int getX() {
+		return x;
+	}
+	void moveDown(int step) {
+		y += step;
+		refresh();
+	}
+	bool isPie() {
+		return flgIsPie;
+	}
+
+};
+
+
+
 int main() {
 	/*initgraph(800, 600);
 	// Load background
@@ -253,10 +325,11 @@ int main() {
 		putimage(0, 0, &background);
 		transimg(marioPosX, marioPosY, &mario, &mariox);
 		Sleep(10);
-	}*/
+	}
 
 	// End of demo anim
 
+	*/
 
 	//Get username
 	wchar_t usrName[20] = L"";
@@ -324,10 +397,21 @@ int main() {
 			if (mouseMsg.uMsg == WM_LBUTTONDOWN) {
 				if (btExit.chkRange(mouseMsg.x, mouseMsg.y))
 					flgEsc = true;
-				else if (btPlay.chkRange(mouseMsg.x, mouseMsg.y))
+				else if (btPlay.chkRange(mouseMsg.x, mouseMsg.y)) {
 					flgPlay = true;
-				else if (btStop.chkRange(mouseMsg.x, mouseMsg.y))
+					timeGame = 0;
+					mForm.setTime(200);
+					mForm.timeBox.refresh();
+					mForm.setLife(3);
+					mForm.lifeBox.refresh();
+					mForm.setScore(0);
+					mForm.scoreBox.refresh();
+				}
+				else if (btStop.chkRange(mouseMsg.x, mouseMsg.y)) {
 					flgPlay = false;
+					mario.setPos(400, 465);
+					mario.refresh();
+				}
 			}
 		}
 		if (flgPlay) { //if in game
@@ -348,6 +432,12 @@ int main() {
 				timeGame = clock();
 				mForm.setTime(mForm.getTime() - 1);
 				mForm.timeBox.refresh();
+				if (mForm.getTime() == 0) {
+					//reset game
+					flgPlay = false;
+					mario.setPos(400, 465);
+					mario.refresh();
+				}
 			}
 		}
 
