@@ -120,10 +120,13 @@ class bow {
 private:
 	IMAGE background;
 	IMAGE backgroundX;
+	IMAGE backupBg; //bg's backup
 	int x;
 	int y;
 	int height;
 	int width;
+	int bkX;
+	int bkY;
 public:
 	void loadBg(LPCTSTR bgPath, LPCTSTR bgXPath) {
 		loadimage(&background, bgPath);
@@ -136,6 +139,33 @@ public:
 	}
 	int getWidth() {
 		return width;
+	}
+	void setPos(int x, int y) {
+		this->x = x;
+		this->y = y;
+	}
+	void show() {
+		//back up the background
+		getimage(&backupBg, x, y, width, height);
+		transimg(x, y, &background, &backgroundX);
+		bkX = x;
+		bkY = y;
+	}
+	void moveL(int step) {
+		if (x - step >= 0) {
+			x -= step;
+			refresh();
+		}
+	}
+	void moveR(int step) {
+		if (x + step <= 800 - width) {
+			x += step;
+			refresh();
+		}
+	}
+	void refresh() {
+		putimage(bkX, bkY, &backupBg);
+		show();
 	}
 };
 
@@ -189,7 +219,11 @@ int main() {
 	btPlay.show();
 	btStop.show();
 	btExit.show();
-
+	//load bow
+	bow mario;
+	mario.loadBg(L"img\\mario.bmp", L"img\\mariox.bmp");
+	mario.setPos(400, 465);
+	mario.show();
 
 
 
@@ -218,16 +252,30 @@ int main() {
 
 	//main loop
 	bool flgEsc = false;
+	bool flgPlay = false;
 	MOUSEMSG mouseMsg = GetMouseMsg();
 	while (!flgEsc) {
 		// check mouse
 		if (MouseHit()) {
 			mouseMsg = GetMouseMsg();
 			if (mouseMsg.uMsg == WM_LBUTTONDOWN) {
-				if (btExit.chkRange(mouseMsg.x, mouseMsg.y)) {
+				if (btExit.chkRange(mouseMsg.x, mouseMsg.y))
 					flgEsc = true;
-				}
+				else if (btPlay.chkRange(mouseMsg.x, mouseMsg.y))
+					flgPlay = true;
+				else if (btStop.chkRange(mouseMsg.x, mouseMsg.y))
+					flgPlay = false;
 			}
+		}
+
+		//check keyboard
+		if (keybd_event) {
+			if ((GetAsyncKeyState(VK_LEFT) & 1) == 1)
+				//move left
+				mario.moveL(10);
+			else if ((GetAsyncKeyState(VK_RIGHT) & 1) == 1)
+				//move right
+				mario.moveR(10);
 		}
 
 	}
