@@ -63,7 +63,7 @@ class mainForm {
 private:
 	wchar_t username[20];
 	IMAGE* background;
-	int highScore = -999;
+	int highScore = 0;
 	int score = 0;
 	int time = 200;
 	int life = 3;
@@ -680,12 +680,12 @@ int main() {
 		if (flgDead) {
 			//death anim
 			while (mario.getY() > 400) {
-				mario.moveU(1);
+				mario.moveU(6);
 				Sleep(1);
 			}
 			while (mario.getY() < 900) {
 				BeginBatchDraw();
-				mario.moveD(2);
+				mario.moveD(10);
 				btPlay.show();
 				btStop.show();
 				btExit.show();
