@@ -236,8 +236,14 @@ int main() {
 					}
 
 					//hit bottom
-					if (boxes.head->next->item.getY() >= 474)
+					if (boxes.head->next->item.getY() >= 474) {
+						if (boxes.head->next->item.isVisible &&
+							boxes.head->next->item.isPie) {
+							//drpooed pie -10
+							frMain.setScore(frMain.getScore() - 10);
+						}
 						boxes.delNode();
+					}
 
 					//repaint things
 					frMain.refreshLabels();
