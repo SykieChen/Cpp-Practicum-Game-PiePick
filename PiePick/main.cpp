@@ -80,10 +80,10 @@ int main() {
 					//high score
 					char* filename = wchar2char(usrName);
 					//switch wchar to char
-					
+
 					//use current username as filename
 					strcat_s(filename, wcslen(usrName) + 10, ".txt");
-		
+
 					//load score from file
 					wchar_t txt[400];
 					oFile.open(filename, ios::in);
@@ -202,7 +202,7 @@ int main() {
 					animDelay = clock();
 					//release new boxes
 					if (clock() - ballBreak >= 2000) {
-						ballBreak = clock();
+						ballBreak = clock() - (rand() % 1000);	//random gap 1s-2s
 						//2s per new box
 						boxes.addNode(rand() % (800 - boxes.head->item.getW()), rand() % 3);
 						//random x pos, 66% possibility to be a pie
