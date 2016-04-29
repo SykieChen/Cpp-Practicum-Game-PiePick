@@ -24,11 +24,11 @@ int main() {
 	loadimage(&bt_exit, L"img\\bt_exit.bmp");
 	loadimage(&bt_stop, L"img\\bt_stop.bmp");
 	loadimage(&btx, L"img\\btx.bmp");
-	
+
 	//Get username
 	wchar_t usrName[20];
-	while (!InputBox(usrName, 20, L"Please input your name:", L"Input name") || !wcscmp(usrName, L""));
-	
+	while (!InputBox(usrName, 20, L"Pie Pick - Sykie Chen\nwww.devchen.com\nPlease input your name:", L"Pie Pick - Sykie Chen") || !wcscmp(usrName, L""));
+
 	//init
 	formMain frMain(usrName, 800, 600, &bg, &bt_play, &bt_pause, &bt_stop, &bt_exit, &bt_hs, &bt_save, &btx);
 	bowl mario(400, 466, &lmario, &lmariox, &rmario, &rmariox, &bg);
@@ -36,6 +36,7 @@ int main() {
 
 	//flags
 	int speed = 2;
+	int scoreOfThisGameBackUpForSaving = 0;
 	bool isExiting = false;
 	bool isPlaying = false;
 	bool gameOver = false;
@@ -44,7 +45,7 @@ int main() {
 	clock_t animDelay = clock();
 	clock_t ballBreak = 0;
 	MOUSEMSG mouseMsg = GetMouseMsg();
-
+	fstream oFile;
 	//main loop
 	while (!isExiting) {
 		//check mouse
@@ -77,25 +78,67 @@ int main() {
 				}
 				else if (frMain.btHs.chkRange(mouseMsg.x, mouseMsg.y)) {
 					//high score
-					//deal with fucking wstr
-					/*size_t len = strlen(savedName) + 1;
-					size_t converted = 0;
-					wchar_t *WStr;
-					WStr = (wchar_t*)malloc(len * sizeof(wchar_t));
-					mbstowcs_s(&converted, WStr, len, savedName, _TRUNCATE);
-
-					wchar_t cont[100];
-					swprintf_s(cont, L"%s\t%d", WStr, savedScore);
-					MessageBox(NULL, cont, TEXT("High Score"), MB_ICONINFORMATION | MB_OK);
-					delete WStr;*/
+					char* filename = wchar2char(usrName);
+					//switch wchar to char
+					
+					//use current username as filename
+					strcat_s(filename, wcslen(usrName) + 10, ".txt");
+		
+					//load score from file
+					wchar_t txt[400];
+					oFile.open(filename, ios::in);
+					if (oFile.is_open()) {
+						//open succeeded
+						int savedScore = 0;
+						bool isHSUpdated = false;
+						while (!oFile.eof()) {
+							oFile >> savedScore;
+							if (savedScore > frMain.getHighScore()) {
+								frMain.setHighScore(savedScore);
+								isHSUpdated = true;
+							}
+						}
+						oFile.close();
+						if (isHSUpdated) {
+							swprintf_s(txt, L"Successfully loaded score from file %s.txt\n\nLoaded highest score %d", usrName, frMain.getHighScore());
+						}
+						else {
+							swprintf_s(txt, L"Successfully loaded file %s.txt\n\nBut no score is higher than current High Score.", usrName);
+						}
+					}
+					else {
+						//no saved score
+						swprintf_s(txt, L"Failed to load %s.txt\n\nYou did not save any score.", usrName);
+					}
+					showmsg(txt);
+					delete filename;
 				}
 				else if (frMain.btSave.chkRange(mouseMsg.x, mouseMsg.y)) {
 					//save game
+					if (!isPlaying) {
+						//write to file
+
+						//switch wchar to char
+						char* filename = wchar2char(usrName);
+						//use current username as filename
+						strcat_s(filename, wcslen(usrName) + 10, ".txt");
+						oFile.open(filename, ios::app);
+						oFile << scoreOfThisGameBackUpForSaving << '\n';
+						oFile.close();
+						wchar_t txt[400];
+						swprintf_s(txt, L"Score saved to %s.txt", usrName);
+						showmsg(txt);
+						delete filename;
+					}
+					else {
+						showmsg(L"You can not save score while the game is on going!\n\nTry saving when game ends.");
+					}
 				}
 			}
 		}
 		//game over?
 		if (gameOver) {
+			scoreOfThisGameBackUpForSaving = frMain.getScore();
 			//update highscore
 			if (frMain.getHighScore() < frMain.getScore()) {
 				frMain.setHighScore(frMain.getScore());
@@ -149,7 +192,7 @@ int main() {
 					frMain.setTime(frMain.getTime() - 1);
 					if (frMain.getTime() == 0) {
 						gameOver = true;
-						showmsg(L"Game Over\nTime up.");
+						showmsg(L"Game Over\n\nTime up.");
 					}
 				}
 
@@ -187,7 +230,7 @@ int main() {
 								//dead
 								EndBatchDraw();
 								gameOver = true;
-								showmsg(L"Game Over\nLife zero.");
+								showmsg(L"Game Over\n\nLife zero.");
 							}
 						}
 					}

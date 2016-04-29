@@ -41,7 +41,16 @@ void showmsg(LPCTSTR text) {
 	RECT a = { 200,250,600,400 };
 	drawtext(text, &a, DT_CENTER);
 	a = { 200,400,600,450 };
-	drawtext(L"Good luck next time...", &a, DT_CENTER);
-	Sleep(5000);
+	drawtext(L"This window will close in 3 seconds...", &a, DT_CENTER);
+	Sleep(3000);
 	putimage(0, 0, &bgbk);
+}
+
+char* wchar2char(LPCTSTR wchar) {
+	char* CStr;
+	size_t len = wcslen(wchar) + 10;
+	size_t converted = 0;
+	CStr = (char*)malloc(len * sizeof(char));
+	wcstombs_s(&converted, CStr, len, wchar, _TRUNCATE);
+	return CStr;
 }

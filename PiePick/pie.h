@@ -153,3 +153,4 @@ public:
 
 void pause(formMain* frm);
 void showmsg(LPCTSTR text);
+char* wchar2char(LPCTSTR wchar);

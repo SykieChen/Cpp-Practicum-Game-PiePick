@@ -2,7 +2,7 @@
 
 formMain::formMain(LPCTSTR usrName, int width, int height, IMAGE* bg,
 	IMAGE* bt_play, IMAGE* bt_pause, IMAGE* bt_stop, IMAGE* bt_exit, IMAGE* bt_hs, IMAGE* bt_save, IMAGE* btx) :
-	lbUsrName(120, 20, 35, 5, bg),
+	lbUsrName(120, 20, 15, 5, bg),
 	lbTime(120, 20, 188, 5, bg),
 	lbScore(120, 20, 341, 5, bg),
 	lbLife(120, 20, 494, 5, bg),
@@ -28,7 +28,7 @@ formMain::formMain(LPCTSTR usrName, int width, int height, IMAGE* bg,
 	lbScore.setText(txt);
 	swprintf_s(txt, L"Life: %d", life);
 	lbLife.setText(txt);
-	swprintf_s(txt, L"High Score: %d", highScore);
+	swprintf_s(txt, L"High Score: N/A");
 	lbHighScore.setText(txt);
 
 	//buttons
