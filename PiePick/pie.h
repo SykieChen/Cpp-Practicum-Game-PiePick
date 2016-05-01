@@ -1,3 +1,5 @@
+#pragma once
+
 #include <graphics.h>
 #include <iostream>
 #include <conio.h>
@@ -39,7 +41,7 @@ public:
 	void show();
 	void hide();
 	void setText(LPCTSTR);
-
+	bool chkRange(int mouseX, int mouseY);
 };
 
 class formMain
@@ -52,9 +54,11 @@ private:
 	int time = 60, score = 0, life = 3;
 	int highScore = 0;
 public:
-	button btPlay, btPause, btStop, btExit, btHs, btSave;
+	int difficluty = 1;
+	button btPlay, btPause, btStop, btExit, btHs, btSave, btSet, btLg, btSg;
 	formMain(LPCTSTR usrName, int width, int height, IMAGE* bg,
-		IMAGE* bt_play, IMAGE* bt_pause, IMAGE* bt_stop, IMAGE* bt_exit, IMAGE* bt_hs, IMAGE* bt_save, IMAGE* btx);
+		IMAGE* bt_play, IMAGE* bt_pause, IMAGE* bt_stop, IMAGE* bt_exit,
+		IMAGE* bt_hs, IMAGE* bt_save, IMAGE* bt_set, IMAGE* bt_lg, IMAGE* bt_sg, IMAGE* btx);
 	int getTime();
 	void setTime(int);
 	int getScore();
@@ -150,7 +154,25 @@ public:
 	~ballList();
 };
 
+class formSettings {
+private:
+	int x, y;
+	int w, h;
+	IMAGE bgbk;
+public:
+	label lbTitle;
+	label lbEasy;
+	label lbNormal;
+	label lbHard;
+	formSettings(int x, int y, int w, int h, int difficulty);
+	~formSettings();
+	void show(int difficulty);
+	int waitOrder();
+
+};
+
 
 void pause(formMain* frm);
 void showmsg(LPCTSTR text);
 char* wchar2char(LPCTSTR wchar);
+int settings(int difficulty);

@@ -1,18 +1,22 @@
 #include "pie.h"
 
 formMain::formMain(LPCTSTR usrName, int width, int height, IMAGE* bg,
-	IMAGE* bt_play, IMAGE* bt_pause, IMAGE* bt_stop, IMAGE* bt_exit, IMAGE* bt_hs, IMAGE* bt_save, IMAGE* btx) :
+	IMAGE* bt_play, IMAGE* bt_pause, IMAGE* bt_stop, IMAGE* bt_exit,
+	IMAGE* bt_hs, IMAGE* bt_save, IMAGE* bt_set, IMAGE* bt_lg, IMAGE* bt_sg, IMAGE* btx) :
 	lbUsrName(170, 20, 15, 5, bg),
 	lbTime(120, 20, 188, 5, bg),
 	lbScore(120, 20, 341, 5, bg),
 	lbLife(120, 20, 494, 5, bg),
 	lbHighScore(120, 20, 647, 5, bg),
-	btPlay(btx->getwidth(), btx->getheight(), 35, 540, bt_play, btx),
-	btPause(btx->getwidth(), btx->getheight(), 35, 540, bt_pause, btx),
-	btStop(btx->getwidth(), btx->getheight(), 188, 540, bt_stop, btx),
-	btExit(btx->getwidth(), btx->getheight(), 341, 540, bt_exit, btx),
-	btHs(btx->getwidth(), btx->getheight(), 494, 540, bt_hs, btx),
-	btSave(btx->getwidth(), btx->getheight(), 647, 540, bt_save, btx)
+	btPlay(btx->getwidth(), btx->getheight(), 49, 534, bt_play, btx),
+	btPause(btx->getwidth(), btx->getheight(), 49, 534, bt_pause, btx),
+	btStop(btx->getwidth(), btx->getheight(), 132, 567, bt_stop, btx),
+	btExit(btx->getwidth(), btx->getheight(), 216, 534, bt_exit, btx),
+	btHs(btx->getwidth(), btx->getheight(), 383, 534, bt_hs, btx),
+	btSave(btx->getwidth(), btx->getheight(), 466, 567, bt_save, btx),
+	btSet(btx->getwidth(), btx->getheight(), 299, 567, bt_set, btx),
+	btSg(btx->getwidth(), btx->getheight(), 633, 567, bt_sg, btx),
+	btLg(btx->getwidth(), btx->getheight(), 550, 534, bt_lg, btx)
 {
 
 	initgraph(800, 600);
@@ -38,7 +42,9 @@ formMain::formMain(LPCTSTR usrName, int width, int height, IMAGE* bg,
 	btExit.show();
 	btHs.show();
 	btSave.show();
-
+	btSet.show();
+	btSg.show();
+	btLg.show();
 }
 
 formMain::~formMain() {

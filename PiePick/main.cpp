@@ -5,7 +5,7 @@ int main() {
 	//load resources
 	IMAGE bg, lmario, lmariox, rmario, rmariox;
 	IMAGE unknown, unknownx, pie, piex, bomb, bombx;
-	IMAGE bt_play, bt_pause, bt_save, bt_hs, bt_exit, bt_stop, btx;
+	IMAGE bt_play, bt_pause, bt_save, bt_hs, bt_exit, bt_stop, bt_set, bt_lg, bt_sg, btx;
 	loadimage(&bg, L"img\\bg.jpg");
 	loadimage(&lmario, L"img\\lmario.bmp");
 	loadimage(&lmariox, L"img\\lmariox.bmp");
@@ -23,6 +23,9 @@ int main() {
 	loadimage(&bt_hs, L"img\\bt_hs.bmp");
 	loadimage(&bt_exit, L"img\\bt_exit.bmp");
 	loadimage(&bt_stop, L"img\\bt_stop.bmp");
+	loadimage(&bt_set, L"img\\bt_set.bmp");
+	loadimage(&bt_lg, L"img\\bt_lg.bmp");
+	loadimage(&bt_sg, L"img\\bt_sg.bmp");
 	loadimage(&btx, L"img\\btx.bmp");
 
 	//Get username
@@ -30,7 +33,8 @@ int main() {
 	while (!InputBox(usrName, 20, L"Pie Pick - Sykie Chen\nwww.devchen.com\nPlease input your name:", L"Pie Pick - Sykie Chen") || !wcscmp(usrName, L""));
 
 	//init
-	formMain frMain(usrName, 800, 600, &bg, &bt_play, &bt_pause, &bt_stop, &bt_exit, &bt_hs, &bt_save, &btx);
+	formMain frMain(usrName, 800, 600,
+		&bg, &bt_play, &bt_pause, &bt_stop, &bt_exit, &bt_hs, &bt_save, &bt_set, &bt_lg, &bt_sg, &btx);
 	bowl mario(400, 466, &lmario, &lmariox, &rmario, &rmariox, &bg);
 	ballList boxes(&unknown, &unknownx, &pie, &piex, &bomb, &bombx, &bg);
 
@@ -46,6 +50,7 @@ int main() {
 	clock_t ballBreak = 0;
 	MOUSEMSG mouseMsg = GetMouseMsg();
 	fstream oFile;
+
 	//main loop
 	while (!isExiting) {
 		//check mouse
@@ -133,6 +138,21 @@ int main() {
 					else {
 						showmsg(L"You can not save score while the game is on going!\n\nTry saving when game ends.");
 					}
+				}
+				else if (frMain.btSet.chkRange(mouseMsg.x, mouseMsg.y)) {
+					//settings
+					if (isPlaying) {
+						showmsg(L"You can not change settings while the game is on going!\n\nTry saving when game ends.");
+					}
+					else {
+						frMain.difficluty = settings(frMain.difficluty);
+					}
+				}
+				else if (frMain.btLg.chkRange(mouseMsg.x, mouseMsg.y)) {
+					//load game
+				}
+				else if (frMain.btSg.chkRange(mouseMsg.x, mouseMsg.y)) {
+					//save game
 				}
 			}
 		}

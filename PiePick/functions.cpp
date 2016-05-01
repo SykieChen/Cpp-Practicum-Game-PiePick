@@ -54,3 +54,8 @@ char* wchar2char(LPCTSTR wchar) {
 	wcstombs_s(&converted, CStr, len, wchar, _TRUNCATE);
 	return CStr;
 }
+
+int settings(int difficulty) {
+	formSettings frSett(200, 150, 400, 300, difficulty);
+	return frSett.waitOrder();
+}

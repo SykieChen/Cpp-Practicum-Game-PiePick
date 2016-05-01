@@ -23,3 +23,9 @@ void label::setText(LPCTSTR text) {
 	wcscpy_s(this->text, text);
 	show();
 }
+
+bool label::chkRange(int mouseX, int mouseY) {
+	if (mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height)
+		return true;
+	else return false;
+}
