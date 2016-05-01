@@ -59,6 +59,6 @@ int formSettings::waitOrder() {
 		Sleep(1);
 	}
 	//perform a delay to see settings clearly before disappears
-	Sleep(1500);
+	Sleep(1000);
 	return difficulty;
 }

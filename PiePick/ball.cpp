@@ -1,10 +1,11 @@
 #include "pie.h"
 
-ball::ball(bool isPie, int x,
+ball::ball(bool isPie, int x, int difficulty,
 	IMAGE* iunknown, IMAGE* iunknownx,
 	IMAGE* ipie, IMAGE* ipiex,
 	IMAGE* ibomb, IMAGE* ibombx,
 	IMAGE* main_bg) {
+	this->difficulty = difficulty;
 	this->isPie = isPie;
 	this->x = x;
 	this->y = -50;
@@ -39,11 +40,11 @@ void ball::move(int speed) {
 void ball::show() {
 	if (isVisible) {
 		//chech time cycle
-		if (isCovered && clock() - lastShown >= 1300) {
+		if (isCovered && clock() - lastShown >= 1500) {
 			isCovered = false;
 			lastShown = clock();
 		}
-		else if (!isCovered && clock() - lastShown >= 300) {
+		else if (!isCovered && clock() - lastShown >= (4 - difficulty) * 200) {	//easy:600ms  normal:400ms  hard:200ms
 			isCovered = true;
 			lastShown = clock();
 		}
@@ -64,25 +65,26 @@ void ball::hide() {
 
 
 
-ballNode::ballNode(int x, bool isPie,
+ballNode::ballNode(int x, bool isPie, int difficulty,
 	IMAGE* iunknown, IMAGE* iunknownx,
 	IMAGE* ipie, IMAGE* ipiex,
 	IMAGE* ibomb, IMAGE* ibombx,
 	IMAGE* main_bg) :
-	item(isPie, x,
+	item(isPie, x, difficulty,
 		iunknown, iunknownx,
 		ipie, ipiex,
 		ibomb, ibombx,
 		main_bg) {}
 
 
-ballList::ballList(IMAGE* iunknown, IMAGE* iunknownx,
+ballList::ballList(int difficulty, IMAGE* iunknown, IMAGE* iunknownx,
 	IMAGE* ipie, IMAGE* ipiex,
 	IMAGE* ibomb, IMAGE* ibombx,
 	IMAGE* main_bg) {
-	head = new ballNode(0, 0, iunknown, iunknownx, ipie, ipiex, ibomb, ibombx, main_bg);
+	head = new ballNode(0, 0, difficulty, iunknown, iunknownx, ipie, ipiex, ibomb, ibombx, main_bg);
 	head->next = NULL;
 	tail = head;
+	this->difficulty = difficulty;
 	this->iunknown = iunknown;
 	this->iunknownx = iunknownx;
 	this->ipie = ipie;
@@ -92,7 +94,7 @@ ballList::ballList(IMAGE* iunknown, IMAGE* iunknownx,
 	this->main_bg = main_bg;
 }
 void ballList::addNode(int x, bool isPie) {
-	tail->next = new ballNode(x, isPie, iunknown, iunknownx, ipie, ipiex, ibomb, ibombx, main_bg);
+	tail->next = new ballNode(x, isPie, difficulty, iunknown, iunknownx, ipie, ipiex, ibomb, ibombx, main_bg);
 	tail = tail->next;
 	tail->next = NULL;
 	tail->item.show();
@@ -132,6 +134,9 @@ void ballList::clear() {
 		t = head->next;
 	}
 	tail = head;
+}
+void ballList::setDifficulty(int difficulty) {
+	this->difficulty = difficulty;
 }
 ballNode* ballList::whoIsCaught(bowl* bowl0) {
 	ballNode* p = head->next;

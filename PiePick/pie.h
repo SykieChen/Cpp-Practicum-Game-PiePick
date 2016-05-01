@@ -54,7 +54,7 @@ private:
 	int time = 60, score = 0, life = 3;
 	int highScore = 0;
 public:
-	int difficluty = 1;
+	int difficluty = 2;
 	button btPlay, btPause, btStop, btExit, btHs, btSave, btSet, btLg, btSg;
 	formMain(LPCTSTR usrName, int width, int height, IMAGE* bg,
 		IMAGE* bt_play, IMAGE* bt_pause, IMAGE* bt_stop, IMAGE* bt_exit,
@@ -75,6 +75,7 @@ class ball {
 private:
 	int x, y;
 	int w, h;
+	int difficulty;
 	IMAGE* iunknown, *iunknownx;
 	IMAGE* ipie, *ipiex;
 	IMAGE* ibomb, *ibombx;
@@ -84,7 +85,7 @@ private:
 public:
 	bool isPie;
 	bool isVisible = true;
-	ball(bool isPie, int x,
+	ball(bool isPie, int x, int difficulty,
 		IMAGE* iunknown, IMAGE* iunknownx,
 		IMAGE* ipie, IMAGE* ipiex,
 		IMAGE* ibomb, IMAGE* ibombx,
@@ -102,7 +103,7 @@ class ballNode {
 public:
 	ball item;
 	ballNode* next;
-	ballNode(int x, bool isPie,
+	ballNode(int x, bool isPie, int difficulty,
 		IMAGE* iunknown, IMAGE* iunknownx,
 		IMAGE* ipie, IMAGE* ipiex,
 		IMAGE* ibomb, IMAGE* ibombx,
@@ -133,6 +134,7 @@ public:
 
 class ballList {
 private:
+	int difficulty;
 	IMAGE* iunknown, *iunknownx;
 	IMAGE* ipie, *ipiex;
 	IMAGE* ibomb, *ibombx;
@@ -140,7 +142,7 @@ private:
 public:
 	ballNode* head;
 	ballNode* tail;
-	ballList(IMAGE* iunknown, IMAGE* iunknownx,
+	ballList(int difficulty, IMAGE* iunknown, IMAGE* iunknownx,
 		IMAGE* ipie, IMAGE* ipiex,
 		IMAGE* ibomb, IMAGE* ibombx,
 		IMAGE* main_bg);
@@ -150,6 +152,7 @@ public:
 	void hide();
 	void move(int speed);
 	void clear();
+	void setDifficulty(int difficulty);
 	ballNode* whoIsCaught(bowl* bowl0);
 	~ballList();
 };

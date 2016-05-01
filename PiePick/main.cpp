@@ -36,10 +36,9 @@ int main() {
 	formMain frMain(usrName, 800, 600,
 		&bg, &bt_play, &bt_pause, &bt_stop, &bt_exit, &bt_hs, &bt_save, &bt_set, &bt_lg, &bt_sg, &btx);
 	bowl mario(400, 466, &lmario, &lmariox, &rmario, &rmariox, &bg);
-	ballList boxes(&unknown, &unknownx, &pie, &piex, &bomb, &bombx, &bg);
+	ballList boxes(frMain.difficluty, &unknown, &unknownx, &pie, &piex, &bomb, &bombx, &bg);
 
 	//flags
-	int speed = 2;
 	int scoreOfThisGameBackUpForSaving = 0;
 	bool isExiting = false;
 	bool isPlaying = false;
@@ -146,6 +145,7 @@ int main() {
 					}
 					else {
 						frMain.difficluty = settings(frMain.difficluty);
+						boxes.setDifficulty(frMain.difficluty); //set boxes' time
 					}
 				}
 				else if (frMain.btLg.chkRange(mouseMsg.x, mouseMsg.y)) {
@@ -221,9 +221,9 @@ int main() {
 					BeginBatchDraw();
 					animDelay = clock();
 					//release new boxes
-					if (clock() - ballBreak >= 2000) {
-						ballBreak = clock() - (rand() % 1000);	//random gap 1s-2s
-						//2s per new box
+					if ((clock() - ballBreak) >= (500 + (4 - frMain.difficluty) * 1000)) {
+						ballBreak = clock() - (rand() % 1000);
+						//easy:2.5-3.5s  normal:1.5-2.5s  hard:0.5-1.5s
 						boxes.addNode(rand() % (800 - boxes.head->item.getW()), rand() % 3);
 						//random x pos, 66% possibility to be a pie
 					}
@@ -232,7 +232,7 @@ int main() {
 
 
 					//move boxes
-					boxes.move(speed);
+					boxes.move(frMain.difficluty);//the speed of ball falls
 
 					//hit mario's head
 					ballNode* p = boxes.whoIsCaught(&mario);
