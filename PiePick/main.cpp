@@ -30,13 +30,13 @@ int main() {
 
 	//Get username
 	wchar_t usrName[20];
-	while (!InputBox(usrName, 20, L"Pie Pick - Sykie Chen\nwww.devchen.com\nPlease input your name:", L"Pie Pick - Sykie Chen") || !wcscmp(usrName, L""));
+	while (!InputBox(usrName, 20, L"Pie Pick - Sykie Chen\nwww.devchen.com\n\nPlease input your name:", L"Pie Pick - Sykie Chen", L"1P", 0, 0, true) || !wcscmp(usrName, L""));
 
 	//init
 	formMain frMain(usrName, 800, 600,
 		&bg, &bt_play, &bt_pause, &bt_stop, &bt_exit, &bt_hs, &bt_save, &bt_set, &bt_lg, &bt_sg, &btx);
 	bowl mario(400, 466, &lmario, &lmariox, &rmario, &rmariox, &bg);
-	ballList boxes(frMain.difficluty, &unknown, &unknownx, &pie, &piex, &bomb, &bombx, &bg);
+	ballList boxes(frMain.difficulty, &unknown, &unknownx, &pie, &piex, &bomb, &bombx, &bg);
 
 	//flags
 	int scoreOfThisGameBackUpForSaving = 0;
@@ -74,6 +74,8 @@ int main() {
 						//clicked pause
 						frMain.btPlay.show();
 						pause(&frMain);
+						animDelay = clock();
+						ballBreak = 1;
 					}
 				}
 				else if (frMain.btStop.chkRange(mouseMsg.x, mouseMsg.y)) {
@@ -118,7 +120,7 @@ int main() {
 					delete filename;
 				}
 				else if (frMain.btSave.chkRange(mouseMsg.x, mouseMsg.y)) {
-					//save game
+					//save game score
 					if (!isPlaying) {
 						//write to file
 
@@ -144,15 +146,28 @@ int main() {
 						showmsg(L"You can not change settings while the game is on going!\n\nTry saving when game ends.");
 					}
 					else {
-						frMain.difficluty = settings(frMain.difficluty);
-						boxes.setDifficulty(frMain.difficluty); //set boxes' time
+						frMain.difficulty = settings(frMain.difficulty);
+						boxes.setDifficulty(frMain.difficulty); //set boxes' time
 					}
 				}
 				else if (frMain.btLg.chkRange(mouseMsg.x, mouseMsg.y)) {
 					//load game
+					loadGame(&frMain, &mario, &boxes, &bg);
+					frMain.refreshLabels();
+					wcscpy_s(usrName, frMain.usrName);
+					isPlaying = true;
+					frMain.btPause.show();
+					animDelay = clock();
+					ballBreak = 1;
 				}
 				else if (frMain.btSg.chkRange(mouseMsg.x, mouseMsg.y)) {
 					//save game
+					if (!isPlaying) {
+						showmsg(L"Game can only be saved while a game is on going.\n\nStart a game first.");
+					}
+					else {
+						saveGame(&frMain, &mario, &boxes);
+					}
 				}
 			}
 		}
@@ -174,6 +189,7 @@ int main() {
 			frMain.btPlay.show();
 			isPlaying = false;
 			gameOver = false;
+			ballBreak = 0;
 		}
 		else {
 			if (isPlaying) {
@@ -221,7 +237,7 @@ int main() {
 					BeginBatchDraw();
 					animDelay = clock();
 					//release new boxes
-					if ((clock() - ballBreak) >= (500 + (4 - frMain.difficluty) * 1000)) {
+					if ((clock() - ballBreak) >= (500 + (4 - frMain.difficulty) * 1000) || ballBreak == 0) {
 						ballBreak = clock() - (rand() % 1000);
 						//easy:2.5-3.5s  normal:1.5-2.5s  hard:0.5-1.5s
 						boxes.addNode(rand() % (800 - boxes.head->item.getW()), rand() % 3);
@@ -232,7 +248,7 @@ int main() {
 
 
 					//move boxes
-					boxes.move(frMain.difficluty);//the speed of ball falls
+					boxes.move(frMain.difficulty);//the speed of ball falls
 
 					//hit mario's head
 					ballNode* p = boxes.whoIsCaught(&mario);

@@ -51,10 +51,11 @@ private:
 	int height;
 	IMAGE* bg;
 	label lbUsrName, lbTime, lbScore, lbHighScore, lbLife;
-	int time = 60, score = 0, life = 3;
+	int time = 200, score = 0, life = 3;
 	int highScore = 0;
 public:
-	int difficluty = 2;
+	wchar_t usrName[30];
+	int difficulty = 2;
 	button btPlay, btPause, btStop, btExit, btHs, btSave, btSet, btLg, btSg;
 	formMain(LPCTSTR usrName, int width, int height, IMAGE* bg,
 		IMAGE* bt_play, IMAGE* bt_pause, IMAGE* bt_stop, IMAGE* bt_exit,
@@ -67,6 +68,7 @@ public:
 	void setHighScore(int);
 	int getLife();
 	void setLife(int);
+	void setUsrName(LPCTSTR);
 	void refreshLabels();
 	~formMain();
 };
@@ -97,6 +99,7 @@ public:
 	void move(int speed);
 	void show();
 	void hide();
+	void setY(int y);
 };
 
 class ballNode {
@@ -178,4 +181,7 @@ public:
 void pause(formMain* frm);
 void showmsg(LPCTSTR text);
 char* wchar2char(LPCTSTR wchar);
+wchar_t* char2wchar(LPSTR ichar);
 int settings(int difficulty);
+void saveGame(formMain* main, bowl* mario, ballList* box);
+void loadGame(formMain* main, bowl* mario, ballList* box, IMAGE* bg);

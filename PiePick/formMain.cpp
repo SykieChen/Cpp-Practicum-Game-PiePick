@@ -24,6 +24,7 @@ formMain::formMain(LPCTSTR usrName, int width, int height, IMAGE* bg,
 	putimage(0, 0, bg);
 	//init boxes
 	wchar_t txt[40];
+	wcscpy_s(this->usrName, usrName);
 	swprintf_s(txt, L"Player: %s", usrName);
 	lbUsrName.setText(txt);
 	swprintf_s(txt, L"Time: %d", time);
@@ -92,6 +93,15 @@ void formMain::setLife(int life) {
 	this->lbLife.hide();
 	this->lbLife.setText(txt);
 }
+
+void formMain::setUsrName(LPCTSTR uName) {
+	wcscpy_s(usrName, uName);
+	wchar_t txt[40];
+	swprintf_s(txt, L"Player: %s", usrName);
+	this->lbUsrName.hide();
+	this->lbUsrName.setText(txt);
+}
+
 
 void formMain::refreshLabels() {
 	lbHighScore.show();

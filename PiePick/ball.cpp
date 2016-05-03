@@ -8,7 +8,7 @@ ball::ball(bool isPie, int x, int difficulty,
 	this->difficulty = difficulty;
 	this->isPie = isPie;
 	this->x = x;
-	this->y = -50;
+	this->y = -90;
 	this->w = iunknown->getwidth();
 	this->h = iunknown->getheight();
 	this->iunknown = iunknown;
@@ -40,7 +40,7 @@ void ball::move(int speed) {
 void ball::show() {
 	if (isVisible) {
 		//chech time cycle
-		if (isCovered && clock() - lastShown >= 1500) {
+		if (isCovered && clock() - lastShown >= 1300) {
 			isCovered = false;
 			lastShown = clock();
 		}
@@ -62,7 +62,9 @@ void ball::show() {
 void ball::hide() {
 	repaintBlock(x, y, x + w, y + h, main_bg);
 }
-
+void ball::setY(int y) {
+	this->y = y;
+}
 
 
 ballNode::ballNode(int x, bool isPie, int difficulty,
