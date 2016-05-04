@@ -159,5 +159,5 @@ void loadGame(formMain* fMain, bowl* mario, ballList* box, IMAGE* bg) {
 	delete fName;
 	delete wUName;
 	delete wNodeMark;
-	showmsg(L"Game loaded successfully!\n\nGame paused, click play to continue.");
+	showmsg(L"Game loaded successfully!\n\nGame will suto start when this disappear.");
 }
